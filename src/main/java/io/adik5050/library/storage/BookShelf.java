@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
  * This class deals with all the storage library functions.
  */
 public class BookShelf {
-    private static final List<String> books = new ArrayList<>();
-    private static final List<String> issuedBooks = new ArrayList<>();
+    private final List<String> books = new ArrayList<>();
+    private final List<String> issuedBooks = new ArrayList<>();
 
     /**
      * The class constructor initialises the data from file to arraylist
@@ -49,14 +49,18 @@ public class BookShelf {
      * Users can either issue or return book one at a time
      */
     public static class Interaction {
+        private final BookShelf bookShelf;
 
+        public Interaction(BookShelf bookShelf) {
+            this.bookShelf = bookShelf;
+        }
         /**
          * This method shows available books in the library
          */
         public void showBooks() {
             StringJoiner bookPair = new StringJoiner(" ; ", "[", "]");
             int i = 0;
-            for(String book : books) {
+            for(String book : bookShelf.books) {
                 if(book.isEmpty())continue;
                 if(i == 2) { i = 0; bookPair.add("\n"); }
                 bookPair.add(book);
@@ -70,13 +74,13 @@ public class BookShelf {
          * @param bookName name of the book to be searched.
          */
         public void searchBook(String bookName) {
-            if (books.contains(bookName)) {
+            if (bookShelf.books.contains(bookName)) {
                 System.out.println("Book Found:- " + bookName);
                 return;
             }
             System.out.println("Exact Match Not Found.");
             Pattern pattern = Pattern.compile(".*" + String.join(".*",bookName.trim().split(""))+ ".*");
-            books.stream()
+            bookShelf.books.stream()
                     .filter(name-> {
                         return pattern.matcher(name).matches();
                     }).forEach(System.out::println);
@@ -88,11 +92,11 @@ public class BookShelf {
          * @param username name of the user who issued the book
          */
         public void issueBook(String bookName, String username) throws IOException{
-            if(!books.contains(bookName)) System.out.println("Book Unavailable");
-            books.remove(bookName);
-            issuedBooks.add(bookName + " issued by " + username);
+            if(!bookShelf.books.contains(bookName)) System.out.println("Book Unavailable");
+            bookShelf.books.remove(bookName);
+            bookShelf.issuedBooks.add(bookName + " issued by " + username);
             System.out.println(bookName + " issued by " + username);
-            updateLibrary(books,issuedBooks);
+            updateLibrary(bookShelf.books,bookShelf.issuedBooks);
         }
 
         /**
@@ -102,14 +106,14 @@ public class BookShelf {
          * @param username name of the user who is returning the book
          */
         public void returnBook(String bookName, String username) throws IOException{
-            if(books.contains(bookName) || !issuedBooks.contains(bookName + " issued by " + username)){
+            if(bookShelf.books.contains(bookName) || !bookShelf.issuedBooks.contains(bookName + " issued by " + username)){
                 System.out.println("Book doesn't belong to the library");
                 return;
             }
-            books.add(bookName);
-            issuedBooks.remove(bookName + " issued by " + username);
+            bookShelf.books.add(bookName);
+            bookShelf.issuedBooks.remove(bookName + " issued by " + username);
             System.out.println(bookName + " returned by " + username);
-            updateLibrary(books,issuedBooks);
+            updateLibrary(bookShelf.books,bookShelf.issuedBooks);
         }
     }
 
@@ -118,14 +122,20 @@ public class BookShelf {
      * users can add or remove a number of books
      */
     public static class EditLibaray {
+        private final BookShelf bookShelf;
+
+        public EditLibaray(BookShelf bookShelf) {
+            this.bookShelf = bookShelf;
+        }
+
         /**
          * this method adds more than one book to the library
          * @param addBooks name of the books to be added
          * @throws IOException IOException
          */
         public void addBooks(List<String> addBooks) throws IOException {
-            books.addAll(addBooks);
-            updateLibrary(books,issuedBooks);
+            bookShelf.books.addAll(addBooks);
+            updateLibrary(bookShelf.books, bookShelf.issuedBooks);
         }
 
         /**
@@ -134,9 +144,9 @@ public class BookShelf {
          * @throws IOException IOException
          */
         public void removeBooks(List<String> removeBooks) throws IOException {
-            if(!books.containsAll(removeBooks)) { System.out.println("Books Not Present in the library!"); return;}
-            books.removeAll(removeBooks);
-            updateLibrary(books,issuedBooks);
+            if(!bookShelf.books.containsAll(removeBooks)) { System.out.println("Books Not Present in the library!"); return;}
+            bookShelf.books.removeAll(removeBooks);
+            updateLibrary( bookShelf.books, bookShelf.issuedBooks);
         }
     }
 }
