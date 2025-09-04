@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
  * This class deals with all the storage library functions.
  */
 public class BookShelf {
-    private static final List<String> books = new ArrayList<>();
-    private static final List<String> issuedBooks = new ArrayList<>();
+    private final List<String> books = new ArrayList<>();
+    private final List<String> issuedBooks = new ArrayList<>();
 
     /**
      * The class constructor initialises the data from file to arraylist
@@ -48,7 +48,7 @@ public class BookShelf {
      * this class helps user to interact with library
      * Users can either issue or return book one at a time
      */
-    public static class Interaction {
+    public class Interaction {
 
         /**
          * This method shows available books in the library
@@ -117,7 +117,7 @@ public class BookShelf {
      * this class helps the user to edit the library
      * users can add or remove a number of books
      */
-    public static class EditLibaray {
+    public class EditLibaray {
         /**
          * this method adds more than one book to the library
          * @param addBooks name of the books to be added
