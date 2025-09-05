@@ -3,7 +3,6 @@ package io.adik5050.library.storage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -70,11 +69,7 @@ public class BookShelf {
          * @param bookName name of the book to be searched.
          */
         public void searchBook(String bookName) {
-            if (books.contains(bookName)) {
-                System.out.println("Book Found:- " + bookName);
-                return;
-            }
-            System.out.println("Exact Match Not Found.");
+            new Output().matchFound(bookName);
             Pattern pattern = Pattern.compile(".*" + String.join(".*",bookName.trim().split(""))+ ".*");
             books.stream()
                     .filter(name-> {
@@ -88,10 +83,13 @@ public class BookShelf {
          * @param username name of the user who issued the book
          */
         public void issueBook(String bookName, String username) throws IOException{
-            if(!books.contains(bookName)) System.out.println("Book Unavailable");
+            if(!new Output().matchFound(bookName)) {
+                new Output().issueOutput(bookName,username, false);
+                return;
+            }
             books.remove(bookName);
             issuedBooks.add(bookName + " issued by " + username);
-            System.out.println(bookName + " issued by " + username);
+            new Output().issueOutput(bookName,username,true);
             updateLibrary(books,issuedBooks);
         }
 
@@ -102,13 +100,13 @@ public class BookShelf {
          * @param username name of the user who is returning the book
          */
         public void returnBook(String bookName, String username) throws IOException{
-            if(books.contains(bookName) || !issuedBooks.contains(bookName + " issued by " + username)){
-                System.out.println("Book doesn't belong to the library");
+            if(books.contains(bookName) || !issuedBooks.contains(bookName + " issued by " + username)) {
+                new Output().returnOutput(bookName,username, false);
                 return;
             }
             books.add(bookName);
             issuedBooks.remove(bookName + " issued by " + username);
-            System.out.println(bookName + " returned by " + username);
+            new Output().returnOutput(bookName, username,true);
             updateLibrary(books,issuedBooks);
         }
     }
@@ -134,9 +132,66 @@ public class BookShelf {
          * @throws IOException IOException
          */
         public void removeBooks(List<String> removeBooks) throws IOException {
-            if(!books.containsAll(removeBooks)) { System.out.println("Books Not Present in the library!"); return;}
+            if(!new Output().bookAvailable(removeBooks))  return;
             books.removeAll(removeBooks);
             updateLibrary(books,issuedBooks);
+        }
+    }
+
+    /**
+     * This class provides outputs.
+     * The soul purpose of this class is to deal with output according to the situation.
+     * Also, to help operation methods(issueBook, removeBooks...) to be unbothered by output handing.
+     */
+    public class Output {
+        /**
+         * returns true if match found and false if not.
+         * @param bookName name of book to be compared.
+         * @return boolean.
+         */
+        public boolean matchFound(String bookName) {
+            if(!books.contains(bookName)) {
+                System.out.println("Exact Match Not Found!");
+                return false;
+            }
+            System.out.println("Match Found:-" + bookName);
+            return true;
+        }
+
+        /**
+         * return true if all books from arguments are available and false if not.
+         * @param bookNames a list of book names passed as arguments.
+         * @return boolean.
+         */
+        public boolean bookAvailable(List<String> bookNames) {
+            if(!books.containsAll(bookNames)) {
+                System.out.println("Books Unavailable!");
+                return false;
+            }
+            System.out.println("Books Available. Addition/Removal successful");
+            return true;
+        }
+
+        /**
+         * prints output if books are issued or not.
+         * @param bookName name of the book to be issued.
+         * @param username name of the user issuing the book.
+         * @param bool boolean.
+         */
+        public void issueOutput(String bookName, String username,boolean bool) {
+            if(bool) System.out.println(bookName + " issued by " + username);
+            else System.out.println("Couldn't issue book.");
+        }
+
+        /**
+         * prints output if returning the book was a success or not.
+         * @param bookName name of the book to be returned.
+         * @param username name of the user returning the book.
+         * @param bool boolean.
+         */
+        public void returnOutput(String bookName, String username, boolean bool) {
+            if(bool) System.out.println(bookName + " returned by " + username);
+            else System.out.println("Couldn't return book.");
         }
     }
 }
