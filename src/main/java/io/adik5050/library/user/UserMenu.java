@@ -29,8 +29,8 @@ public class UserMenu {
     public UserMenu(Scanner sc) throws IOException {
         this.sc = sc;
         bookShelf = new BookShelf();
-        this.interactionObj = new BookShelf.Interaction();
-        this.editLibraryObj = new BookShelf.EditLibaray();
+        this.interactionObj = bookShelf.new Interaction();
+        this.editLibraryObj = bookShelf.new EditLibaray();
     }
 
     /**
