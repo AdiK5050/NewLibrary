@@ -40,7 +40,6 @@ public class BookShelf {
     public static void updateLibrary(List<String> books, List<String> issuedBooks) throws IOException {
         Files.write(path("Books.txt"),books);
         Files.write(path("issuedBooks.txt"), issuedBooks);
-        System.out.println("Library Refreshed!");
     }
 
     /**
@@ -65,30 +64,48 @@ public class BookShelf {
         }
 
         /**
-         * This method searches and prints the name of the book or similar books.
+         * this method returns the book searched for or similar books if exact match is not found.
          * @param bookName name of the book to be searched.
          */
-        public void searchBook(String bookName) {
-            new Output().matchFound(bookName);
+        public List<String> searchBook(String bookName) {
             Pattern pattern = Pattern.compile(".*" + String.join(".*",bookName.trim().split(""))+ ".*");
-            books.stream()
+            return books.stream()
                     .filter(name-> {
                         return pattern.matcher(name).matches();
-                    }).forEach(System.out::println);
+                    }).toList();
             }
 
         /**
-         * This method issues book and updates the library
+         * this method searches for a book and print the book or similar books found.
+          * @param bookName name of the book to be searched.
+         */
+        public void booksMatched(String bookName) {
+            new Output().searchOutput(searchBook(bookName).size());
+            searchBook(bookName).forEach(System.out::println);
+        }
+
+        /**
+         * this method issues book and updates the library
          * @param bookName name of the book to be issued
          * @param username name of the user who issued the book
          */
-        public void issueBook(String bookName, String username) throws IOException{
+        public void issuing(String bookName, String username) {
+            books.remove(bookName);
+            issuedBooks.add(bookName + " issued by " + username);
+        }
+
+        /**
+         * this method issues the book if found, updates library and prints output.
+         * @param bookName name of the book to be issued.
+         * @param username name of the user issuing the book.
+         * @throws IOException IOException
+         */
+        public void issueBook(String bookName, String username) throws IOException {
             if(!new Output().matchFound(bookName)) {
                 new Output().issueOutput(bookName,username, false);
                 return;
             }
-            books.remove(bookName);
-            issuedBooks.add(bookName + " issued by " + username);
+            issuing(bookName, username);
             new Output().issueOutput(bookName,username,true);
             updateLibrary(books,issuedBooks);
         }
@@ -99,13 +116,24 @@ public class BookShelf {
          * @param bookName name of the book to be returned
          * @param username name of the user who is returning the book
          */
-        public void returnBook(String bookName, String username) throws IOException{
+        public void returning(String bookName, String username) {
+            books.add(bookName);
+            issuedBooks.remove(bookName + " issued by " + username);
+
+        }
+
+        /**
+         * this method returns the book, updates library and prints output.
+         * @param bookName name of the book to be returned.
+         * @param username name of the user returning the book.
+         * @throws IOException IOException.
+         */
+        public void returnBook(String bookName, String username) throws IOException {
             if(books.contains(bookName) || !issuedBooks.contains(bookName + " issued by " + username)) {
                 new Output().returnOutput(bookName,username, false);
                 return;
             }
-            books.add(bookName);
-            issuedBooks.remove(bookName + " issued by " + username);
+            returning(bookName, username);
             new Output().returnOutput(bookName, username,true);
             updateLibrary(books,issuedBooks);
         }
@@ -117,24 +145,43 @@ public class BookShelf {
      */
     public class EditLibaray {
         /**
-         * this method adds more than one book to the library
-         * @param addBooks name of the books to be added
-         * @throws IOException IOException
+         * this method adds more than one book to the library.
+         * @param addBooks list of the books to be added.
          */
-        public void addBooks(List<String> addBooks) throws IOException {
+        public void add(List<String> addBooks) {
             books.addAll(addBooks);
-            updateLibrary(books,issuedBooks);
         }
 
         /**
-         * this method removes more than one book to the library
-         * @param removeBooks name of the books to be removed
+         * this method add books, updates library and prints output.
+         * @param addBooks list of the books to be added.
+         * @throws IOException IOException
+         */
+        public void addBooks(List<String> addBooks) throws IOException {
+            add(addBooks);
+            updateLibrary(addBooks,issuedBooks);
+            new Output().bookAvailable(addBooks);
+        }
+
+        /**
+         * this method removes more than one book to the library.
+         * @param removeBooks list of the books to be removed.
+         * @throws IOException IOException
+         */
+        public void remove(List<String> removeBooks) {
+            books.removeAll(removeBooks);
+        }
+
+        /**
+         * this method removes books if possible, updates library and prints output.
+         * @param removeBooks list of the books to be removed
          * @throws IOException IOException
          */
         public void removeBooks(List<String> removeBooks) throws IOException {
             if(!new Output().bookAvailable(removeBooks))  return;
-            books.removeAll(removeBooks);
-            updateLibrary(books,issuedBooks);
+            remove(removeBooks);
+            updateLibrary(books, issuedBooks);
+            System.out.println("Library Refreshed!");
         }
     }
 
@@ -143,7 +190,7 @@ public class BookShelf {
      * The soul purpose of this class is to deal with output according to the situation.
      * Also, to help operation methods(issueBook, removeBooks...) to be unbothered by output handing.
      */
-    public class Output {
+    private class Output {
         /**
          * returns true if match found and false if not.
          * @param bookName name of book to be compared.
@@ -192,6 +239,14 @@ public class BookShelf {
         public void returnOutput(String bookName, String username, boolean bool) {
             if(bool) System.out.println(bookName + " returned by " + username);
             else System.out.println("Couldn't return book.");
+        }
+
+        public void searchOutput(int size) {
+            if(size == 0) {
+                System.out.println("No Such Book Found.");
+                return;
+            }
+            System.out.println(size +" Similar Book Found.");
         }
     }
 }
