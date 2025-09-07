@@ -1,11 +1,8 @@
 package io.adik5050.library.user;
 
-import io.adik5050.library.storage.BookShelf;
+import io.adik5050.library.storage.*;
 
 import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
@@ -18,9 +15,10 @@ public class UserMenu {
 
     Scanner sc;
     final Input input;
+    final Display display;
     final BookShelf bookShelf;
-    final BookShelf.Interaction interactionObj;
-    final BookShelf.EditLibaray editLibraryObj;
+    final LibraryInteraction interactionObj;
+    final EditLibrary editLibraryObj;
 
     /**
      * class constructor to initialise class instances.
@@ -30,9 +28,10 @@ public class UserMenu {
     public UserMenu(Scanner sc) throws IOException {
         this.sc = sc;
         this.input = new Input(sc);
+        this.display = new Display();
         this.bookShelf = new BookShelf();
-        this.interactionObj = bookShelf.new Interaction();
-        this.editLibraryObj = bookShelf.new EditLibaray();
+        this.interactionObj = new LibraryInteraction(bookShelf);
+        this.editLibraryObj = new EditLibrary(bookShelf);
     }
 
     /**
@@ -94,97 +93,25 @@ public class UserMenu {
             try {
                 MenuOptions option = options.get(input.choiceInput()).enumItem;
                 switch (option) {
-                    case searchBook -> interactionObj.booksMatched(input.singleBookInput());
+                    case searchBook -> display.searchOutput(interactionObj.searchBook(input.singleBookInput()));
 
-                    case addBooks -> editLibraryObj.addBooks(input.multipleBookInput());
+                    case addBooks -> display.addOutput(editLibraryObj.addBooks(input.multipleBookInput()));
 
-                    case removeBooks -> editLibraryObj.removeBooks(input.multipleBookInput());
+                    case removeBooks -> display.removeOutput(editLibraryObj.removeBooks(input.multipleBookInput()));
 
-                    case issueBook -> interactionObj.issueBook(input.singleBookInput(), userName);
+                    case issueBook -> display.issueOutput(userName, interactionObj.issueBook(input.singleBookInput(), userName));
 
-                    case returnBook -> interactionObj.returnBook(input.singleBookInput(), userName);
+                    case returnBook -> display.returnOutput(userName, interactionObj.returnBook(input.singleBookInput(), userName));
 
-                    case showBooks -> interactionObj.showBooks();
+                    case showBooks -> display.showBookOutput(interactionObj.allBooks());
 
                     case exit -> running = false;
+
+                    default -> throw new IllegalStateException("Unexpected value: " + option);
                 }
             }catch (IndexOutOfBoundsException e) {
                 System.out.println("Invalid choice input. Try again...");
             }
-        }
-    }
-    public class Input {
-        Scanner sc;
-        public Input(Scanner sc) {
-            this.sc = sc;
-        }
-        /**
-         * to input user choice.
-         * @return returns user choice.
-         */
-        public int choiceInput() {
-            int input = -1,count = 0;
-            while(count < 3) {
-                try {
-                    input = sc.nextInt();
-                    break;
-                } catch (InputMismatchException e) {
-                    System.out.println("Invalid Input! Please Enter a valid integer...");
-                    sc.nextLine();
-                    count++;
-                }
-            }
-            return input;
-        }
-
-        /**
-         * to input username.
-         * @return returns username.
-         */
-        public String usernameInput() {
-            System.out.print("Enter your name:");
-            return sc.nextLine();
-        }
-
-        /**
-         * to input multiple book names for add and remove operations.
-         * @return list of book names.
-         */
-        public List<String> multipleBookInput() {
-            List<String> bookNames = new ArrayList<>();
-            int numOfBooks = 0, count = 0;
-            while(count < 3) {
-                try {
-                    System.out.print("How Many books do you want to add/remove? :");
-                    numOfBooks = sc.nextInt();
-                    sc.nextLine();
-                    break;
-                } catch (InputMismatchException e1) {
-                    System.out.println("Invalid Input!");
-                    sc.nextLine();
-                    count++;
-                } catch (Exception e2) {
-                    throw new RuntimeException(e2);
-                }
-            }
-            for(int i = 0; i < numOfBooks; i++) {
-                String bookName;
-                System.out.print("Enter Name of the Book:");
-                bookName = sc.nextLine();
-                bookNames.add(bookName);
-            }
-            return bookNames;
-        }
-
-        /**
-         * to input single book name for issue, return and search operations.
-         * @return returns book name.
-         */
-
-        public String singleBookInput() {
-            sc.nextLine();
-            System.out.print("Enter the name of the book: ");
-            return sc.nextLine();
         }
     }
 }
