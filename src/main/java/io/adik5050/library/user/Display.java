@@ -15,4 +15,5 @@ public interface Display {
     public void returnOutput(String username, boolean bool);
 
     public void showBookOutput(List<String> allBooks);
+
 }
