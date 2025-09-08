@@ -15,7 +15,7 @@ public class UserMenu {
 
     Scanner sc;
     final Input input;
-    final TerminalDisplay terminalDisplay;
+    final Display display;
     final BookShelf bookShelf;
     final LibraryInteraction interactionObj;
     final EditLibrary editLibraryObj;
@@ -23,12 +23,11 @@ public class UserMenu {
     /**
      * class constructor to initialise class instances.
      * @param sc scanner object for user input.
-     * @throws IOException IOException
      */
-    public UserMenu(Scanner sc, Input input, TerminalDisplay terminalDisplay, BookShelf bookShelf, LibraryInteraction libraryInteraction, EditLibrary editLibraryObj) throws IOException {
+    public UserMenu(Scanner sc, Input input, Display display, BookShelf bookShelf, LibraryInteraction libraryInteraction, EditLibrary editLibraryObj) {
         this.sc = sc;
         this.input = input;
-        this.terminalDisplay = terminalDisplay;
+        this.display = display;
         this.bookShelf = bookShelf;
         this.interactionObj = libraryInteraction;
         this.editLibraryObj = editLibraryObj;
@@ -46,7 +45,7 @@ public class UserMenu {
         showBooks("Show Books"),
         exit("Exit");
 
-        private final String title;
+        final String title;
 
         /**
          * enum constructor to add title for each option to be shown to the user.
@@ -58,24 +57,12 @@ public class UserMenu {
     }
 
     /**
-     * Options to be stored as data and then terminalDisplayed later.
-     * @param title title of enumItem to be terminalDisplayed.
+     * Options to be stored as data and then displayed later.
+     * @param title title of enumItem to be displayed.
      * @param enumItem enumItem.
      * @param <T> Generic
      */
     record Options<T> (String title, T enumItem) {
-    }
-
-    /**
-     * to terminalDisplay menu options.
-     */
-    private void terminalDisplayMenu() {
-        int i = 0;
-        System.out.println("Choose an option:- ");
-        for (MenuOptions option : MenuOptions.values()) {
-            System.out.println("\nPress "+ i + " to " + option.title);
-            i++;
-        }
     }
 
     /**
@@ -89,21 +76,21 @@ public class UserMenu {
                         .map(menuItem -> new Options<>(menuItem.title, menuItem))
                         .toList();
         while(running) {
-            terminalDisplayMenu();
+            display.displayMenu();
             try {
                 MenuOptions option = options.get(input.choiceInput()).enumItem;
                 switch (option) {
-                    case searchBook -> terminalDisplay.searchOutput(interactionObj.searchBook(input.singleBookInput()));
+                    case searchBook -> display.searchOutput(interactionObj.searchBook(input.singleBookInput()));
 
-                    case addBooks -> terminalDisplay.addOutput(editLibraryObj.addBooks(input.multipleBookInput()));
+                    case addBooks -> display.addOutput(editLibraryObj.addBooks(input.multipleBookInput()));
 
-                    case removeBooks -> terminalDisplay.removeOutput(editLibraryObj.removeBooks(input.multipleBookInput()));
+                    case removeBooks -> display.removeOutput(editLibraryObj.removeBooks(input.multipleBookInput()));
 
-                    case issueBook -> terminalDisplay.issueOutput(userName, interactionObj.issueBook(input.singleBookInput(), userName));
+                    case issueBook -> display.issueOutput(userName, interactionObj.issueBook(input.singleBookInput(), userName));
 
-                    case returnBook -> terminalDisplay.returnOutput(userName, interactionObj.returnBook(input.singleBookInput(), userName));
+                    case returnBook -> display.returnOutput(userName, interactionObj.returnBook(input.singleBookInput(), userName));
 
-                    case showBooks -> terminalDisplay.showBookOutput(interactionObj.allBooks());
+                    case showBooks -> display.showBookOutput(interactionObj.allBooks());
 
                     case exit -> running = false;
 

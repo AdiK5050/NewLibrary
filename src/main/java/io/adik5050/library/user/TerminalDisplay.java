@@ -11,6 +11,19 @@ import java.util.StringJoiner;
 public class TerminalDisplay implements Display{
 
     /**
+     * this method displays menu options.
+     */
+    @Override
+    public void displayMenu() {
+        int i = 0;
+        for (UserMenu.MenuOptions option : UserMenu.MenuOptions.values()) {
+            System.out.println("\nPress "+ i + " to " + option.title);
+            i++;
+        }
+        System.out.print("Choose an option:- ");
+    }
+
+    /**
      * this method returns if searched book or similar books are present.
      * @param searchedBooks name of the books similar to searched books.
      */

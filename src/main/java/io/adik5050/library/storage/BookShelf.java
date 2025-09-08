@@ -28,7 +28,7 @@ public class BookShelf {
      * @return finalPath path of the file to be opened
      * @throws IOException IOException
      */
-    private Path path(String filename) throws IOException {
+    public Path path(String filename) throws IOException {
         Path finalPath = Path.of(System.getProperty("user.home"),".newLibrary", filename);
         if(!Files.exists(finalPath)) Files.createDirectories(finalPath.getParent());
         if(!Files.exists(finalPath)) Files.createFile(finalPath);

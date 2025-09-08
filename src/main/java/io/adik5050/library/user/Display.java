@@ -2,18 +2,20 @@ package io.adik5050.library.user;
 
 import java.util.List;
 
-public interface Display {
+ public interface Display {
 
-    public void searchOutput(List<String> searchedBooks);
+     void displayMenu();
 
-    public void addOutput(boolean alwaysTrue);
+     void searchOutput(List<String> searchedBooks);
 
-    public void removeOutput(boolean bool);
+     void addOutput(boolean alwaysTrue);
 
-    public void issueOutput(String username,boolean bool);
+     void removeOutput(boolean bool);
 
-    public void returnOutput(String username, boolean bool);
+     void issueOutput(String username,boolean bool);
 
-    public void showBookOutput(List<String> allBooks);
+     void returnOutput(String username, boolean bool);
+
+     void showBookOutput(List<String> allBooks);
 
 }
