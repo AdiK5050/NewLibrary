@@ -22,9 +22,9 @@ public class Non_TerminalInput implements Input {
     @Override
     public String usernameInput() {
         String input;
-        non_terminalDisplay.askUserInput("Enter your name: ");
+        non_terminalDisplay.userPrompts("Enter your name: ");
         input = sc.nextLine();
-        non_terminalDisplay.askUserInput(input + "\n");
+        non_terminalDisplay.userPrompts(input + "\n");
         return input;
     }
 
@@ -37,13 +37,13 @@ public class Non_TerminalInput implements Input {
         String input; int i = 0;
         while (true) {
             try {
-                non_terminalDisplay.askUserInput("\nChoose an option:- ");
+                non_terminalDisplay.userPrompts("\nChoose an option:- ");
                 input = sc.nextLine();
-                non_terminalDisplay.askUserInput(input + "\n");
+                non_terminalDisplay.userPrompts(input + "\n");
                 return Integer.parseInt(input);
             } catch (NumberFormatException e) {
                 if(i > 2) break;
-                non_terminalDisplay.askUserInput("\nInvalid Input! Please enter a valid Integer.");
+                non_terminalDisplay.userPrompts("\nInvalid Input! Please enter a valid Integer.");
                 i++;
             }
         }
@@ -57,9 +57,9 @@ public class Non_TerminalInput implements Input {
     @Override
     public String singleBookInput() {
         String input;
-        non_terminalDisplay.askUserInput("\nEnter the name of the book: ");
+        non_terminalDisplay.userPrompts("\nEnter the name of the book: ");
         input = sc.nextLine();
-        non_terminalDisplay.askUserInput(input + "\n");
+        non_terminalDisplay.userPrompts(input + "\n");
         return input;
     }
 
@@ -74,20 +74,20 @@ public class Non_TerminalInput implements Input {
         int inputNumberOfBooks = -1, count = 2, i = 1;
         while (count != 0) {
             try {
-                non_terminalDisplay.askUserInput("\nHow many books do you want to add/remove?: ");
+                non_terminalDisplay.userPrompts("\nHow many books do you want to add/remove?: ");
                 inputNumberOfBooks = sc.nextInt();
-                non_terminalDisplay.askUserInput(String.valueOf(inputNumberOfBooks));
+                non_terminalDisplay.userPrompts(String.valueOf(inputNumberOfBooks));
                 break;
             } catch (InputMismatchException e) {
-                non_terminalDisplay.askUserInput("\nInvalid Input! Please enter a valid Integer.");
+                non_terminalDisplay.userPrompts("\nInvalid Input! Please enter a valid Integer.");
                 count--;
             }
         }
         sc.nextLine();
         while(i <= inputNumberOfBooks) {
-            non_terminalDisplay.askUserInput("\nEnter name of the book " + i + ": ");
+            non_terminalDisplay.userPrompts("\nEnter name of the book " + i + ": ");
             inputBookName = sc.nextLine();
-            non_terminalDisplay.askUserInput(inputBookName + "\n");
+            non_terminalDisplay.userPrompts(inputBookName + "\n");
             books.add(inputBookName);
             i++;
         }

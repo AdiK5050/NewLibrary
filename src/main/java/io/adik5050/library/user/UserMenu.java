@@ -97,7 +97,7 @@ public class UserMenu {
                     default -> throw new IllegalStateException("Unexpected value: " + option);
                 }
             }catch (IndexOutOfBoundsException e) {
-                System.out.println("Invalid choice input Try again...");
+                display.userPrompts("Invalid choice input Try again...");
             }finally {
                 bookShelf.updateLibrary(bookShelf.books,bookShelf.issuedBooks);
             }

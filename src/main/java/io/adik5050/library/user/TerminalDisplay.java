@@ -24,6 +24,15 @@ public class TerminalDisplay implements Display{
     }
 
     /**
+     * this method displays all the user inputs and options given to users.
+     * @param prompts takes a string argument.
+     */
+    @Override
+    public void userPrompts(String prompts) {
+        System.out.println(prompts);
+    }
+
+    /**
      * this method returns if searched book or similar books are present.
      * @param searchedBooks name of the books similar to searched books.
      */

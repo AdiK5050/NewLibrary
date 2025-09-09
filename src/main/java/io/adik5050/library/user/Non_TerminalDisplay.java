@@ -37,10 +37,11 @@ public class Non_TerminalDisplay implements Display{
 
     /**
      * this method displays all the user inputs and options given to users.
-     * @param askString takes a string argument.
+     * @param prompts takes a string argument.
      */
-    public void askUserInput(String askString) {
-        output.append(askString);
+    @Override
+    public void userPrompts(String prompts) {
+        output.append(prompts);
         newFrame(output.toString());
     }
 

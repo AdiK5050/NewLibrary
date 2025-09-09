@@ -6,6 +6,8 @@ import java.util.List;
 
      void displayMenu();
 
+     void userPrompts(String prompts);
+
      void searchOutput(List<String> searchedBooks);
 
      void addOutput(boolean alwaysTrue);
