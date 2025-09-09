@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 /**
  * This class provides a user menu.
- * Two major roles this class fulfills:- To provide user options in the menu and To take user input.
+ * Two major roles this class fulfills:- To provide user options in the menu and To take user terminalInput.
  */
 public class UserMenu {
 
@@ -97,7 +97,9 @@ public class UserMenu {
                     default -> throw new IllegalStateException("Unexpected value: " + option);
                 }
             }catch (IndexOutOfBoundsException e) {
-                System.out.println("Invalid choice input. Try again...");
+                System.out.println("Invalid choice input Try again...");
+            }finally {
+                bookShelf.updateLibrary(bookShelf.books,bookShelf.issuedBooks);
             }
         }
     }

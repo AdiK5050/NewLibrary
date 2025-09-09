@@ -9,19 +9,18 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class FileDisplay implements Display{
+public class Non_TerminalDisplay implements Display{
 
-    BookShelf bookShelf;
-    Path outputPath;
-    ProcessBuilder notepad;
-    StringBuilder output = new StringBuilder();
+    final BookShelf bookShelf;
+    private final Path outputPath;
+
+    private final StringBuilder output = new StringBuilder();
 
 
-    public FileDisplay(BookShelf bookShelf) throws IOException {
+    public Non_TerminalDisplay(BookShelf bookShelf) throws IOException {
         this.bookShelf = bookShelf;
         this.outputPath = bookShelf.path("Screen.txt");
-        this.notepad = new ProcessBuilder("notepad.exe","C:/Users/kumra/.newLibrary/Screen.txt");
-        notepad.start();
+
     }
     /**
      * this method displays menu options.
@@ -33,9 +32,16 @@ public class FileDisplay implements Display{
             output.append("\nPress ").append(i).append(" to ").append(option.title);
             i++;
         }
-        output.append("\nChoose an option:- ");
         newFrame(output.toString());
-        output.setLength(0);
+    }
+
+    /**
+     * this method displays all the user inputs and options given to users.
+     * @param askString takes a string argument.
+     */
+    public void askUserInput(String askString) {
+        output.append(askString);
+        newFrame(output.toString());
     }
 
     /**
@@ -56,7 +62,7 @@ public class FileDisplay implements Display{
     @Override
     public void searchOutput(List<String> searchedBooks) {
         if(searchedBooks.isEmpty()) { output.append("No Such Book Found.\n"); return; }
-        output.append(searchedBooks.size()).append(" Similar Books Found.\n");
+        output.append("\n").append(searchedBooks.size()).append(" Similar Books Found.\n");
         searchedBooks.forEach(str-> output.append(str).append("\n"));
         newFrame(output.toString());
     }
