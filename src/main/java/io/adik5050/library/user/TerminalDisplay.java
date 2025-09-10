@@ -20,7 +20,6 @@ public class TerminalDisplay implements Display{
             System.out.println("\nPress "+ i + " to " + option.title);
             i++;
         }
-        System.out.print("Choose an option:- ");
     }
 
     /**

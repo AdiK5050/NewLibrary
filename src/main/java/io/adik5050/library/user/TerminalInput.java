@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TerminalInput implements Input {
+
     Scanner sc;
-    public TerminalInput(Scanner sc) {
+    Display terminalDisplay;
+
+    public TerminalInput(Scanner sc, Display terminalDisplay) {
         this.sc = sc;
+        this.terminalDisplay = terminalDisplay;
     }
 
     /**
@@ -17,7 +21,7 @@ public class TerminalInput implements Input {
      */
     @Override
     public String usernameInput() {
-        System.out.print("Enter your name:");
+        terminalDisplay.userPrompts("Enter your name: ");
         return sc.nextLine();
     }
 
@@ -27,14 +31,14 @@ public class TerminalInput implements Input {
      */
     @Override
     public int choiceInput() {
-        String input; int i = 0;
+        int i = 0;
         while (true) {
             try {
-                System.out.println("\nChoose an option:- ");
+                terminalDisplay.userPrompts("\nChoose an option:- ");
                 return sc.nextInt();
             } catch (InputMismatchException e) {
                 if(i > 2) break;
-                System.out.println("\nInvalid Input! Please enter a valid Integer.");
+                terminalDisplay.userPrompts("\nInvalid Input! Please enter a valid Integer.");
                 sc.nextLine();
                 i++;
             }
@@ -49,7 +53,7 @@ public class TerminalInput implements Input {
     @Override
     public String singleBookInput() {
         sc.nextLine();
-        System.out.print("Enter the name of the book: ");
+        terminalDisplay.userPrompts("\nEnter the name of the book: ");
         return sc.nextLine();
     }
 
@@ -63,12 +67,12 @@ public class TerminalInput implements Input {
         int numOfBooks = 0, count = 0;
         while(count < 3) {
             try {
-                System.out.print("How Many books do you want to add/remove? :");
+                terminalDisplay.userPrompts("\nHow Many books do you want to add/remove? :");
                 numOfBooks = sc.nextInt();
                 sc.nextLine();
                 break;
             } catch (InputMismatchException e1) {
-                System.out.println("Invalid Input!");
+                terminalDisplay.userPrompts("\nInvalid Input!");
                 sc.nextLine();
                 count++;
             } catch (Exception e2) {
@@ -77,7 +81,7 @@ public class TerminalInput implements Input {
         }
         for(int i = 0; i < numOfBooks; i++) {
             String bookName;
-            System.out.print("Enter Name of the Book:");
+            terminalDisplay.userPrompts("\nEnter Name of the Book: ");
             bookName = sc.nextLine();
             bookNames.add(bookName);
         }

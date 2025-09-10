@@ -8,9 +8,9 @@ import java.util.Scanner;
 public class Non_TerminalInput implements Input {
 
     Scanner sc;
-    Non_TerminalDisplay non_terminalDisplay;
+    Display non_terminalDisplay;
 
-    public Non_TerminalInput(Scanner sc ,Non_TerminalDisplay non_terminalDisplay) {
+    public Non_TerminalInput(Scanner sc ,Display non_terminalDisplay) {
         this.sc = sc;
         this.non_terminalDisplay = non_terminalDisplay;
     }

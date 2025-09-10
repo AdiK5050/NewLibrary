@@ -4,6 +4,7 @@ import io.adik5050.library.storage.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -19,18 +20,20 @@ public class UserMenu {
     final BookShelf bookShelf;
     final LibraryInteraction interactionObj;
     final EditLibrary editLibraryObj;
+    ProcessBuilder process;
 
     /**
      * class constructor to initialise class instances.
      * @param sc scanner object for user input.
      */
-    public UserMenu(Scanner sc, Input input, Display display, BookShelf bookShelf, LibraryInteraction libraryInteraction, EditLibrary editLibraryObj) {
+    public UserMenu(Scanner sc, Input input, Display display, BookShelf bookShelf, LibraryInteraction libraryInteraction, EditLibrary editLibraryObj, ProcessBuilder process) {
         this.sc = sc;
         this.input = input;
         this.display = display;
         this.bookShelf = bookShelf;
         this.interactionObj = libraryInteraction;
         this.editLibraryObj = editLibraryObj;
+        this.process = process;
     }
 
     /**
@@ -65,6 +68,25 @@ public class UserMenu {
     record Options<T> (String title, T enumItem) {
     }
 
+    public boolean inputOutputCheck() {
+        if((Objects.equals(display.getClass(),Non_TerminalDisplay.class) && Objects.equals(input.getClass(), TerminalInput.class))) {
+            System.out.println("Mismatched Input and Output instances! Can't proceed any further.");
+            return false;
+        }
+        else if((Objects.equals(display.getClass(),TerminalDisplay.class) && Objects.equals(input.getClass(), Non_TerminalInput.class))) {
+            System.out.println("Mismatched Input and Output instances! Can't proceed any further.");
+            return false;
+        }
+        else if(this.display.getClass() == Non_TerminalDisplay.class) {
+            try {
+                process.start();
+            }catch (IOException e) {
+                display.userPrompts(e.toString());
+            }
+            return true;
+        }
+        return true;
+    }
     /**
      * main menu method to summarise all operations for user.
      * @throws IOException IOException

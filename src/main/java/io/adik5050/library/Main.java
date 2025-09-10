@@ -13,16 +13,16 @@ import java.util.Scanner;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
-        ProcessBuilder notepad;
-        notepad = new ProcessBuilder("notepad.exe","C:/Users/kumra/.newLibrary/Screen.txt");
-        notepad.start();
+
         Scanner sc = new Scanner(System.in);
         final BookShelf bookShelf = new BookShelf();
-        final Non_TerminalDisplay display = new Non_TerminalDisplay(bookShelf);
-        final Non_TerminalInput input = new Non_TerminalInput(sc, display);
+        final Display display = new Non_TerminalDisplay(bookShelf);
+        final Input input = new Non_TerminalInput(sc, display);
         final LibraryInteraction interactionObj = new LibraryInteraction(bookShelf);
         final EditLibrary editLibraryObj = new EditLibrary(bookShelf);
-        UserMenu userMenu = new UserMenu(sc, input, display, bookShelf,interactionObj, editLibraryObj);
-        userMenu.menu();
+        final ProcessBuilder notepad = new ProcessBuilder("notepad.exe","C:/Users/kumra/.newLibrary/Screen.txt");
+        UserMenu userMenu = new UserMenu(sc, input, display, bookShelf,interactionObj, editLibraryObj,notepad);
+        if(userMenu.inputOutputCheck())
+            userMenu.menu();
     }
 }
