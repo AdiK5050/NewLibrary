@@ -20,8 +20,15 @@ public class Main {
         final Input input = new Non_TerminalInput(sc, display);
         final LibraryInteraction interactionObj = new LibraryInteraction(bookShelf);
         final EditLibrary editLibraryObj = new EditLibrary(bookShelf);
-        final ProcessBuilder notepad = new ProcessBuilder("notepad.exe","C:/Users/kumra/.newLibrary/Screen.txt");
-        UserMenu userMenu = new UserMenu(sc, input, display, bookShelf,interactionObj, editLibraryObj,notepad);
+        final ProcessBuilder process = new ProcessBuilder("notepad.exe","C:/Users/kumra/.newLibrary/Screen.txt");
+        UserMenu userMenu = new UserMenu(
+                sc,
+                input,
+                display,
+                bookShelf,
+                interactionObj,
+                editLibraryObj,
+                process);
         if(userMenu.inputOutputCheck())
             userMenu.menu();
     }

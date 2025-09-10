@@ -69,15 +69,7 @@ public class UserMenu {
     }
 
     public boolean inputOutputCheck() {
-        if((Objects.equals(display.getClass(),Non_TerminalDisplay.class) && Objects.equals(input.getClass(), TerminalInput.class))) {
-            System.out.println("Mismatched Input and Output instances! Can't proceed any further.");
-            return false;
-        }
-        else if((Objects.equals(display.getClass(),TerminalDisplay.class) && Objects.equals(input.getClass(), Non_TerminalInput.class))) {
-            System.out.println("Mismatched Input and Output instances! Can't proceed any further.");
-            return false;
-        }
-        else if(this.display.getClass() == Non_TerminalDisplay.class) {
+        if((Objects.equals(display.getClass(),Non_TerminalDisplay.class ) && Objects.equals(input.getClass(), Non_TerminalInput.class ))) {
             try {
                 process.start();
             }catch (IOException e) {
@@ -85,7 +77,10 @@ public class UserMenu {
             }
             return true;
         }
-        return true;
+        else if((Objects.equals(display.getClass(),TerminalDisplay.class ) && Objects.equals(input.getClass(), TerminalInput.class )))
+            return true;
+        System.out.println("Mismatched Input and Output instances! Can't proceed any further.");
+        return false;
     }
     /**
      * main menu method to summarise all operations for user.
