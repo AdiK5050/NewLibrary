@@ -14,7 +14,7 @@ public class BookShelf {
     public final List<String> issuedBooks = new ArrayList<>();
 
     /**
-     * The class constructor initialises the data from file to arraylist
+     * The class constructor initializes the data from file to arraylist
      * @throws IOException IOException
      */
     public BookShelf() throws IOException{
