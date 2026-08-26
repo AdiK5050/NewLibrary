@@ -25,7 +25,6 @@ public class DatabaseOperations {
             newConnection = databaseConnection.getDatabaseConnection();
             statement = newConnection.createStatement();
             statement.executeUpdate(query);
-            System.out.println("BOOK TABLE CREATED");
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
