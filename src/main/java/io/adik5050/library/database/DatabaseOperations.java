@@ -1,12 +1,12 @@
 package io.adik5050.library.database;
 
 import io.adik5050.library.database.entities.book.Book;
+import io.adik5050.library.database.entities.book.BookStatus;
 import io.adik5050.library.database.entities.user.User;
+import io.adik5050.library.database.entities.user.UserRole;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseOperations {
@@ -108,5 +108,115 @@ public class DatabaseOperations {
             databaseConnection.closeAutoClosable(preparedStatement);
             databaseConnection.closeAutoClosable(newConnection);
         }
+    }
+
+    public List<Book> getAllBooks() {
+        Connection newConnection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        List<Book> books = new ArrayList<>();
+        String getAllBooksQuery = "SELECT * FROM adidb.book";
+        try {
+            newConnection = databaseConnection.getDatabaseConnection();
+            statement = newConnection.createStatement();
+            statement.executeQuery(getAllBooksQuery);
+            resultSet = statement.executeQuery(getAllBooksQuery);
+            while(resultSet.next()) {
+                books.add(getBookFromResultSet(resultSet));
+            }
+            return books;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            databaseConnection.closeAutoClosable(resultSet);
+            databaseConnection.closeAutoClosable(statement);
+            databaseConnection.closeAutoClosable(newConnection);
+        }
+    }
+
+    public List<Book> getAllBooksByStatus(BookStatus bookStatus) {
+        Connection newConnection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        List<Book> books = new ArrayList<>();
+        String getAllBooksQueryByStatus = "SELECT * FROM adidb.book WHERE status = '" + bookStatus.name() + "'";
+        try {
+            newConnection = databaseConnection.getDatabaseConnection();
+            statement = newConnection.createStatement();
+            statement.executeQuery(getAllBooksQueryByStatus);
+            resultSet = statement.executeQuery(getAllBooksQueryByStatus);
+            while(resultSet.next()) {
+                books.add(getBookFromResultSet(resultSet));
+            }
+            return books;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            databaseConnection.closeAutoClosable(resultSet);
+            databaseConnection.closeAutoClosable(statement);
+            databaseConnection.closeAutoClosable(newConnection);
+        }
+    }
+
+    private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
+        String uuid = resultSet.getString("uuid");
+        String name = resultSet.getString("name");
+        String author = resultSet.getString("author");
+        String type = resultSet.getString("type");
+        String status = resultSet.getString("status");
+        return new Book(uuid, name, author, type, status);
+    }
+
+    public List<User> getAllUsers() {
+        Connection newConnection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        List<User> users = new ArrayList<>();
+        String getAllUsersQuery = "SELECT * FROM adidb.user";
+        try {
+            newConnection = databaseConnection.getDatabaseConnection();
+            statement = newConnection.createStatement();
+            statement.executeQuery(getAllUsersQuery);
+            resultSet = statement.executeQuery(getAllUsersQuery);
+            while(resultSet.next()) users.add(getUserFromResultSet(resultSet));
+            return users;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            databaseConnection.closeAutoClosable(resultSet);
+            databaseConnection.closeAutoClosable(statement);
+            databaseConnection.closeAutoClosable(newConnection);
+        }
+    }
+
+    public List<User> getAllUsersByRole(UserRole userRole) {
+        Connection newConnection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        List<User> users = new ArrayList<>();
+        String getAllUsersByRoleQuery = "SELECT * FROM adidb.user WHERE role = '" + userRole.name() + "'";
+        try {
+            newConnection = databaseConnection.getDatabaseConnection();
+            statement = newConnection.createStatement();
+            statement.executeQuery(getAllUsersByRoleQuery);
+            resultSet = statement.executeQuery(getAllUsersByRoleQuery);
+            while(resultSet.next()) users.add(getUserFromResultSet(resultSet));
+            return users;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            databaseConnection.closeAutoClosable(resultSet);
+            databaseConnection.closeAutoClosable(statement);
+            databaseConnection.closeAutoClosable(newConnection);
+        }
+    }
+
+    private User getUserFromResultSet(ResultSet resultSet) throws SQLException {
+        String uuid = resultSet.getString("uuid");
+        String name = resultSet.getString("name");
+        String username = resultSet.getString("username");
+        String password = "";
+        String role = resultSet.getString("role");
+        return new User(uuid, name, username, password, role);
     }
 }
