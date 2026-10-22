@@ -1,9 +1,8 @@
 package io.adik5050.library.user;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import io.adik5050.library.database.entities.book.Book;
+import io.adik5050.library.database.entities.book.BookStatus;
+import java.util.*;
 
 public class TerminalInput implements Input {
 
@@ -62,8 +61,8 @@ public class TerminalInput implements Input {
      * @return list of book names.
      */
     @Override
-    public List<String> multipleBookInput() {
-        List<String> bookNames = new ArrayList<>();
+    public List<Book> multipleBookInput() {
+        List<Book> bookNames = new ArrayList<>();
         int numOfBooks = 0, count = 0;
         while(count < 3) {
             try {
@@ -80,10 +79,15 @@ public class TerminalInput implements Input {
             }
         }
         for(int i = 0; i < numOfBooks; i++) {
-            String bookName;
+            String bookName, authorName, bookType, bookStatus;
             terminalDisplay.userPrompts("\nEnter Name of the Book: ");
             bookName = sc.nextLine();
-            bookNames.add(bookName);
+            terminalDisplay.userPrompts("\nEnter Name of the Author: ");
+            authorName = sc.nextLine();
+            terminalDisplay.userPrompts("\nEnter Type of the Book");
+            bookType = sc.nextLine();
+            bookStatus = BookStatus.AVAILABLE.name();
+            bookNames.add(new Book(UUID.randomUUID().toString(), bookName, authorName, bookType, bookStatus));
         }
         return bookNames;
     }

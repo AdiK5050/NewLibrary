@@ -1,5 +1,7 @@
 package io.adik5050.library.user;
 
+import io.adik5050.library.database.entities.book.Book;
+
 import java.util.List;
 
 public interface Input {
@@ -20,7 +22,7 @@ public interface Input {
      * to input multiple book names for add and remove operations.
      * @return list of book names.
      */
-    List<String> multipleBookInput();
+    List<Book> multipleBookInput();
 
     String singleBookInput();
 }

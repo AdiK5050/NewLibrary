@@ -19,11 +19,12 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         final DatabaseConnection databaseConnection = new DatabaseConnection(args[0]);
         final DatabaseOperations databaseOperations = new DatabaseOperations(databaseConnection);
-        final BookShelf bookShelf = new BookShelf();
-        final Display display = new Non_TerminalDisplay(bookShelf);
-        final Input input = new Non_TerminalInput(sc, display);
+        final BookShelf bookShelf = new BookShelf(databaseOperations.getBookDao());
+        final Display display = new TerminalDisplay();
+        final Input input = new TerminalInput(sc, display);
         final LibraryInteraction interactionObj = new LibraryInteraction(bookShelf);
         final EditLibrary editLibraryObj = new EditLibrary(bookShelf);
+
         UserMenu userMenu = new UserMenu(
                 sc,
                 input,

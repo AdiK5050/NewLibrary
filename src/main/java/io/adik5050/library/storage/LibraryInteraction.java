@@ -1,7 +1,10 @@
 package io.adik5050.library.storage;
 
+import io.adik5050.library.database.entities.book.Book;
+import io.adik5050.library.database.entities.book.BookStatus;
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 /**
@@ -20,20 +23,16 @@ public class LibraryInteraction {
      * This method returns all books in the library.
      * @return list of all books.
      */
-    public List<String> allBooks() {
-        return bookShelf.books;
+    public List<Book> allBooks() {
+        return bookShelf.bookDao.getAllBooks();
     }
 
     /**
      * this method returns the book searched for or similar books if exact match is not found.
      * @param bookName name of the book to be searched.
      */
-    public List<String> searchBook(String bookName) {
-        Pattern pattern = Pattern.compile(".*" + String.join(".*",bookName.trim().split(""))+ ".*");
-        return bookShelf.books.stream()
-                .filter(name-> {
-                    return pattern.matcher(name).matches();
-                }).toList();
+    public List<Book> searchBook(String bookName) {
+        return bookShelf.bookDao.searchBookByName(bookName);
     }
 
     /**
@@ -42,8 +41,7 @@ public class LibraryInteraction {
      * @param username name of the user who issued the book.
      */
     public void issuing(String bookName, String username) {
-        bookShelf.books.remove(bookName);
-        bookShelf.issuedBooks.add(bookName + " issued by " + username);
+
     }
 
     /**
@@ -52,10 +50,13 @@ public class LibraryInteraction {
      * @param username name of the user issuing the book.
      * @throws IOException IOException
      */
-    public boolean issueBook(String bookName, String username) throws IOException {
-        if(!bookShelf.books.contains(bookName.trim())) return false;
-        issuing(bookName, username);
-        bookShelf.updateLibrary(bookShelf.books,bookShelf.issuedBooks);
+    public boolean issueBook(String bookName, String username) {
+        try {
+            Book selectedBook = bookShelf.bookDao.searchBookByName(bookName).getFirst();
+            bookShelf.bookDao.updateBookStatus(selectedBook, BookStatus.ISSUED);
+        } catch (NoSuchElementException e) {
+            throw new RuntimeException("Couldn't Issue Book: Book Not Found.", e);
+        }
         return true;
     }
 
@@ -65,8 +66,7 @@ public class LibraryInteraction {
      * @param username name of the user who is returning the book
      */
     public void returning(String bookName, String username) {
-        bookShelf.books.add(bookName);
-        bookShelf.issuedBooks.remove(bookName + " issued by " + username);
+
     }
 
     /**
@@ -77,11 +77,6 @@ public class LibraryInteraction {
      * @throws IOException IOException.
      */
     public boolean returnBook(String bookName, String username) throws IOException {
-        if(bookShelf.books.contains(bookName.trim()) || !bookShelf.issuedBooks.contains(bookName + " issued by " + username)) {
-            return false;
-        }
-        returning(bookName, username);
-        bookShelf.updateLibrary(bookShelf.books,bookShelf.issuedBooks);
         return true;
     }
 }

@@ -1,5 +1,6 @@
 package io.adik5050.library.storage;
 
+import io.adik5050.library.database.entities.book.Book;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,9 +21,8 @@ public class EditLibrary {
      * @param addBooks list of the books to be added.
      * @throws IOException IOException
      */
-    public boolean addBooks(List<String> addBooks) throws IOException {
-        bookShelf.books.addAll(addBooks);
-        bookShelf.updateLibrary(bookShelf.books, bookShelf.issuedBooks);
+    public boolean addBooks(List<Book> addBooks) throws IOException {
+        bookShelf.bookDao.insertBook(addBooks);
         return true;
     }
 
@@ -31,10 +31,8 @@ public class EditLibrary {
      * @param removeBooks list of the books to be removed
      * @throws IOException IOException
      */
-    public boolean removeBooks(List<String> removeBooks) throws IOException {
-        if(!bookShelf.books.containsAll(removeBooks)) return false;
-        bookShelf.books.removeAll(removeBooks);
-        bookShelf.updateLibrary(bookShelf.books, bookShelf.issuedBooks);
+    public boolean removeBooks(List<Book> removeBooks) throws IOException {
+        bookShelf.bookDao.deleteBook(removeBooks);
         return true;
     }
 }
