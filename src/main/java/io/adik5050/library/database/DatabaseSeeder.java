@@ -1,5 +1,7 @@
 package io.adik5050.library.database;
 
+import io.adik5050.library.database.dao.BookDao;
+import io.adik5050.library.database.dao.UserDao;
 import io.adik5050.library.database.entities.book.Book;
 
 import java.io.IOException;
@@ -11,9 +13,13 @@ import java.util.UUID;
 
 public class DatabaseSeeder {
     DatabaseOperations databaseOperations;
+    UserDao userDao;
+    BookDao bookDao;
 
-    public DatabaseSeeder(DatabaseOperations databaseOperations) {
+    public DatabaseSeeder(DatabaseOperations databaseOperations, UserDao userDao, BookDao bookDao) {
         this.databaseOperations = databaseOperations;
+        this.userDao = userDao;
+        this.bookDao = bookDao;
     }
     public  void seedBooks() throws IOException {
         List<String> allBooksString = new ArrayList<>();
@@ -24,7 +30,7 @@ public class DatabaseSeeder {
             allBooks.add(book);
             System.out.println(allBooks.size());
         }
-        databaseOperations.insertBook(allBooks);
+        bookDao.insertBook(allBooks);
     }
 
     public  Book parseBookStringToBook(String bookString) {
