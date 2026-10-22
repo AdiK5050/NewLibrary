@@ -26,13 +26,14 @@ public class DatabaseConnection {
         return properties;
     }
 
-    protected Connection getDatabaseConnection() throws SQLException {
+    public Connection getDatabaseConnection() throws SQLException {
         String url = properties.getProperty("URL");
         String username = properties.getProperty("USERNAME");
         String password = properties.getProperty("PASSWORD");
         return  DriverManager.getConnection(url, username, password);
     }
-    protected void closeAutoClosable(AutoCloseable autocloseable) {
+
+    public void closeAutoClosable(AutoCloseable autocloseable) {
         try {
             autocloseable.close();
         } catch (Exception e) {
