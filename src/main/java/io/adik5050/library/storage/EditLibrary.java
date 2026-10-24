@@ -1,6 +1,11 @@
 package io.adik5050.library.storage;
 
+import io.adik5050.library.database.dao.BookDao;
+import io.adik5050.library.database.dao.HistoryDao;
 import io.adik5050.library.database.entities.book.Book;
+import io.adik5050.library.database.entities.issuedBook.Action;
+import io.adik5050.library.database.entities.issuedBook.History;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -10,29 +15,34 @@ import java.util.List;
  */
 public class EditLibrary {
 
-    BookShelf bookShelf;
-
-    public EditLibrary(BookShelf bookShelf) {
-        this.bookShelf = bookShelf;
+    BookDao bookDao;
+    HistoryDao historyDao;
+    public EditLibrary(BookDao bookDao, HistoryDao historyDao) {
+        this.bookDao = bookDao;
+        this.historyDao = historyDao;
     }
 
     /**
      * this method add books and updates library..
-     * @param addBooks list of the books to be added.
-     * @throws IOException IOException
+     * @param books list of the books to be added.
      */
-    public boolean addBooks(List<Book> addBooks) throws IOException {
-        bookShelf.bookDao.insertBook(addBooks);
+    public boolean addBooks(List<Book> books) {
+        bookDao.insertBook(books);
+        for(Book book: books) {
+            historyDao.insertHistory(book.uuid(), "abcd1234efgh5678ijkl", Action.ADD);
+        }
         return true;
     }
 
     /**
      * this method removes books if possible and updates library.
-     * @param removeBooks list of the books to be removed
-     * @throws IOException IOException
+     * @param books list of the books to be removed
      */
-    public boolean removeBooks(List<Book> removeBooks) throws IOException {
-        bookShelf.bookDao.deleteBook(removeBooks);
+    public boolean removeBooks(List<Book> books) {
+        bookDao.deleteBook(books);
+        for(Book book: books) {
+            historyDao.insertHistory(book.uuid(), "abcd1234efgh5678ijkl", Action.ADD);
+        }
         return true;
     }
 }

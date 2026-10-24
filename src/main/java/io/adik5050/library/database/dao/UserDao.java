@@ -14,13 +14,14 @@ public class UserDao {
     DatabaseConnection databaseConnection;
     DatabaseOperations databaseOperations;
 
-    public UserDao(DatabaseConnection databaseConnection, DatabaseOperations databaseOperations) {
+    public UserDao(DatabaseConnection databaseConnection) {
         this.databaseConnection = databaseConnection;
-        this.databaseOperations = databaseOperations;
         createUserTable();
     }
 
     private void createUserTable() {
+        Connection newConnection = null;
+        Statement statement = null;
         String createUserTableQuery =
                 "CREATE TABLE IF NOT EXISTS " +
                         "adidb.user(" +
@@ -30,7 +31,16 @@ public class UserDao {
                         " password VARCHAR(30)," +
                         " role VARCHAR(30)" +
                         ")";
-        databaseOperations.executeUpdateStatement(createUserTableQuery);
+        try {
+            newConnection = databaseConnection.getDatabaseConnection();
+            statement = newConnection.createStatement();
+            statement.executeUpdate(createUserTableQuery);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            databaseConnection.closeAutoClosable(statement);
+            databaseConnection.closeAutoClosable(newConnection);
+        }
     }
 
     public void insertUser(List<User> users) {

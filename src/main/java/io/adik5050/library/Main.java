@@ -2,7 +2,6 @@ package io.adik5050.library;
 
 import io.adik5050.library.database.DatabaseConnection;
 import io.adik5050.library.database.DatabaseOperations;
-import io.adik5050.library.storage.BookShelf;
 import io.adik5050.library.storage.EditLibrary;
 import io.adik5050.library.storage.LibraryInteraction;
 import io.adik5050.library.user.*;
@@ -19,17 +18,15 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         final DatabaseConnection databaseConnection = new DatabaseConnection(args[0]);
         final DatabaseOperations databaseOperations = new DatabaseOperations(databaseConnection);
-        final BookShelf bookShelf = new BookShelf(databaseOperations.getBookDao());
         final Display display = new TerminalDisplay();
         final Input input = new TerminalInput(sc, display);
-        final LibraryInteraction interactionObj = new LibraryInteraction(bookShelf);
-        final EditLibrary editLibraryObj = new EditLibrary(bookShelf);
+        final LibraryInteraction interactionObj = new LibraryInteraction(databaseOperations.getBookDao(), databaseOperations.getHistoryDao());
+        final EditLibrary editLibraryObj = new EditLibrary(databaseOperations.getBookDao(), databaseOperations.getHistoryDao());
 
         UserMenu userMenu = new UserMenu(
                 sc,
                 input,
                 display,
-                bookShelf,
                 interactionObj,
                 editLibraryObj);
         userMenu.menu();

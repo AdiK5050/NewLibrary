@@ -16,19 +16,17 @@ public class UserMenu {
     Scanner sc;
     final Input input;
     final Display display;
-    final BookShelf bookShelf;
     final LibraryInteraction interactionObj;
     final EditLibrary editLibraryObj;
 
     /**
-     * class constructor to initialise class instances.
+     * class constructor to initialize class instances.
      * @param sc scanner object for user input.
      */
-    public UserMenu(Scanner sc, Input input, Display display, BookShelf bookShelf, LibraryInteraction libraryInteraction, EditLibrary editLibraryObj) {
+    public UserMenu(Scanner sc, Input input, Display display, LibraryInteraction libraryInteraction, EditLibrary editLibraryObj) {
         this.sc = sc;
         this.input = input;
         this.display = display;
-        this.bookShelf = bookShelf;
         this.interactionObj = libraryInteraction;
         this.editLibraryObj = editLibraryObj;
     }
@@ -67,7 +65,7 @@ public class UserMenu {
 
 
     /**
-     * main menu method to summarise all operations for user.
+     * main menu method to summarize all operations for user.
      * @throws IOException IOException
      */
     public void menu() throws IOException {
@@ -82,7 +80,6 @@ public class UserMenu {
                 MenuOptions option = options.get(input.choiceInput()).enumItem;
                 switch (option) {
                     case searchBook -> display.searchOutput(interactionObj.searchBook(input.singleBookInput()));
-
                     case addBooks -> display.addOutput(editLibraryObj.addBooks(input.multipleBookInput()));
 
                     case removeBooks -> display.removeOutput(editLibraryObj.removeBooks(input.multipleBookInput()));

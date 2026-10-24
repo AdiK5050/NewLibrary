@@ -9,19 +9,20 @@ import io.adik5050.library.database.entities.book.BookType;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class BookDao {
 
     DatabaseConnection databaseConnection;
-    DatabaseOperations databaseOperations;
 
-    public BookDao(DatabaseConnection databaseConnection, DatabaseOperations databaseOperations) {
+    public BookDao(DatabaseConnection databaseConnection) {
         this.databaseConnection = databaseConnection;
-        this.databaseOperations = databaseOperations;
         createBookTable();
     }
 
     private void createBookTable() {
+        Connection newConnection = null;
+        Statement statement = null;
         String createBookTableQuery =
                 "CREATE TABLE IF NOT EXISTS " +
                         "adidb.book(" +
@@ -31,8 +32,16 @@ public class BookDao {
                         " type varchar(50), " +
                         " status VARCHAR(30)" +
                         ")";
-
-        databaseOperations.executeUpdateStatement(createBookTableQuery);
+        try {
+            newConnection = databaseConnection.getDatabaseConnection();
+            statement = newConnection.createStatement();
+            statement.executeUpdate(createBookTableQuery);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            databaseConnection.closeAutoClosable(statement);
+            databaseConnection.closeAutoClosable(newConnection);
+        }
     }
 
     public void insertBook(List<Book> books) {
@@ -181,12 +190,12 @@ public class BookDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<Book> books = new ArrayList<>();
-        String searchBookByNameQuery = "SELECT * FROM adidb.book WHERE name LIKE ? WHERE status = ?";
+        String searchBookByNameQuery = "SELECT * FROM adidb.book WHERE name LIKE ? AND status = ?;";
         try {
             newConnection = databaseConnection.getDatabaseConnection();
             preparedStatement = newConnection.prepareStatement(searchBookByNameQuery);
             preparedStatement.setString(1, "%" + bookName + "%");
-            preparedStatement.setString(2, "'" + status.name() + "'");
+            preparedStatement.setString(2, status.name());
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 books.add(Book.fromResultSet(resultSet));
@@ -226,7 +235,7 @@ public class BookDao {
         }
     }
 
-    public void updateBookStatus(Book book, BookStatus status) {
+    public void updateBookStatus(String book_uuid, BookStatus status) {
         Connection newConnection = null;
         PreparedStatement preparedStatement = null;
         String updateBookStatusQuery = "UPDATE adidb.book SET status = ? WHERE  uuid = ?";
@@ -235,7 +244,8 @@ public class BookDao {
             newConnection = databaseConnection.getDatabaseConnection();
             preparedStatement = newConnection.prepareStatement(updateBookStatusQuery);
             preparedStatement.setString(1, status.name());
-            preparedStatement.setString(2, book.uuid());
+            preparedStatement.setString(2, book_uuid);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {

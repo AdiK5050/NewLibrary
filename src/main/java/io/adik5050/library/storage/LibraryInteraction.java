@@ -1,11 +1,12 @@
 package io.adik5050.library.storage;
 
+import io.adik5050.library.database.dao.BookDao;
+import io.adik5050.library.database.dao.HistoryDao;
 import io.adik5050.library.database.entities.book.Book;
 import io.adik5050.library.database.entities.book.BookStatus;
-import java.io.IOException;
+import io.adik5050.library.database.entities.issuedBook.Action;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.regex.Pattern;
 
 /**
  * this class helps user to interact with library
@@ -13,10 +14,12 @@ import java.util.regex.Pattern;
  */
 public class LibraryInteraction {
 
-    BookShelf bookShelf;
+    BookDao bookDao;
+    HistoryDao historyDao;
 
-    public LibraryInteraction(BookShelf bookShelf) {
-        this.bookShelf = bookShelf;
+    public LibraryInteraction(BookDao bookDao, HistoryDao historyDao)  {
+        this.bookDao = bookDao;
+        this.historyDao = historyDao;
     }
 
     /**
@@ -24,7 +27,7 @@ public class LibraryInteraction {
      * @return list of all books.
      */
     public List<Book> allBooks() {
-        return bookShelf.bookDao.getAllBooks();
+        return bookDao.getAllBooks();
     }
 
     /**
@@ -32,41 +35,23 @@ public class LibraryInteraction {
      * @param bookName name of the book to be searched.
      */
     public List<Book> searchBook(String bookName) {
-        return bookShelf.bookDao.searchBookByName(bookName);
-    }
-
-    /**
-     * this method issues book.
-     * @param bookName name of the book to be issued.
-     * @param username name of the user who issued the book.
-     */
-    public void issuing(String bookName, String username) {
-
+        return bookDao.searchBookByName(bookName);
     }
 
     /**
      * this method issues the book if found and updates library;
      * @param bookName name of the book to be issued.
      * @param username name of the user issuing the book.
-     * @throws IOException IOException
      */
     public boolean issueBook(String bookName, String username) {
         try {
-            Book selectedBook = bookShelf.bookDao.searchBookByName(bookName).getFirst();
-            bookShelf.bookDao.updateBookStatus(selectedBook, BookStatus.ISSUED);
+            Book selectedBook = bookDao.searchBookByNameAndStatus(bookName, BookStatus.AVAILABLE).getFirst();
+            bookDao.updateBookStatus(selectedBook.uuid(), BookStatus.NOT_AVAILABLE);
+            historyDao.insertHistory(selectedBook.uuid(), username, Action.ISSUE);
         } catch (NoSuchElementException e) {
-            throw new RuntimeException("Couldn't Issue Book: Book Not Found.", e);
+            throw new RuntimeException("Couldn't Issue Book: Either Book Not Available Or Doesn't Belong To The Library.", e);
         }
         return true;
-    }
-
-    /**
-     * this method returns the book.
-     * @param bookName name of the book to be returned
-     * @param username name of the user who is returning the book
-     */
-    public void returning(String bookName, String username) {
-
     }
 
     /**
@@ -74,9 +59,15 @@ public class LibraryInteraction {
      * Note:- The user who issues the book and the user who returns the book must be same.
      * @param bookName name of the book to be returned.
      * @param username name of the user returning the book.
-     * @throws IOException IOException.
      */
-    public boolean returnBook(String bookName, String username) throws IOException {
+    public boolean returnBook(String bookName, String username) {
+        try {
+            Book selectedBook = bookDao.searchBookByNameAndStatus(bookName, BookStatus.NOT_AVAILABLE).getFirst();
+            bookDao.updateBookStatus(selectedBook.uuid(), BookStatus.AVAILABLE);
+            historyDao.insertHistory(selectedBook.uuid(), username, Action.RETURN);
+        } catch (NoSuchElementException e) {
+            throw new RuntimeException("Couldn't Issue Book: Either Book Already Available Or Doesn't Belong To The Library.", e);
+        }
         return true;
     }
 }
