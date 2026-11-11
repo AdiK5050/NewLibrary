@@ -1,5 +1,7 @@
 package io.adik5050.library.user;
 
+import io.adik5050.library.database.entities.book.Book;
+
 import java.util.List;
 
  public interface Display {
@@ -8,7 +10,7 @@ import java.util.List;
 
      void userPrompts(String prompts);
 
-     void searchOutput(List<String> searchedBooks);
+     void searchOutput(List<Book> searchedBooks);
 
      void addOutput(boolean alwaysTrue);
 
@@ -18,6 +20,6 @@ import java.util.List;
 
      void returnOutput(String username, boolean bool);
 
-     void showBookOutput(List<String> allBooks);
+     void showBookOutput(List<Book> allBooks);
 
 }

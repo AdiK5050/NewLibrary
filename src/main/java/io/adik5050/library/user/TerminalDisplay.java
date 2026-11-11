@@ -1,5 +1,6 @@
 package io.adik5050.library.user;
 
+import io.adik5050.library.database.entities.book.Book;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -36,7 +37,7 @@ public class TerminalDisplay implements Display{
      * @param searchedBooks name of the books similar to searched books.
      */
     @Override
-    public void searchOutput(List<String> searchedBooks) {
+    public void searchOutput(List<Book> searchedBooks) {
         if(searchedBooks.isEmpty()) { System.out.println("No Such Book Found."); return; }
         System.out.println(searchedBooks.size() + " Similar Books Found.");
         searchedBooks.forEach(System.out::println);
@@ -88,9 +89,9 @@ public class TerminalDisplay implements Display{
      * @param allBooks a list of all books available in the library.
      */
     @Override
-    public void showBookOutput(List<String> allBooks) {
+    public void showBookOutput(List<Book> allBooks) {
         for(int i = 0; i < allBooks.size() - 1; i += 2) {
-            System.out.println(new StringJoiner(" ; ", "[ ", " ]").add(allBooks.get(i)).add(allBooks.get(i + 1)));
+            System.out.println(new StringJoiner(" ; ", "[ ", " ]").add(allBooks.get(i).name()).add(allBooks.get(i + 1).name()));
         }
         if(allBooks.size() % 2 != 0)
             System.out.println("[ " + allBooks.getLast() + " ]");
