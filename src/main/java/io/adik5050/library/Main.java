@@ -16,8 +16,8 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         final BookShelf bookShelf = new BookShelf();
-        final Display display = new Non_TerminalDisplay(bookShelf);
-        final Input input = new Non_TerminalInput(sc, display);
+        final Display display = new TerminalDisplay();
+        final Input input = new TerminalInput(sc, display);
         final LibraryInteraction interactionObj = new LibraryInteraction(bookShelf);
         final EditLibrary editLibraryObj = new EditLibrary(bookShelf);
         UserMenu userMenu = new UserMenu(
